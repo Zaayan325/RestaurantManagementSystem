@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RestaurantManagementSystem</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom shadow-sm mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold text-primary" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-egg-fried"></i> RMS
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Dashboard</a>
+                        </li>
+
+                        @* Everyone logged in (Admin, Waiter, Chef) should see Orders and Menu *@
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Order" asp-action="Index">Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Menu" asp-action="Index">View Menu</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Table" asp-action="Index">View Table</a>
+                            </li>
+                        }
+
+                        @* Admin Only: High-level Management *@
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="adminDropdown" data-bs-toggle="dropdown">
+                                    Administration
+                                </a>
+                                <ul class="dropdown-menu shadow-sm">
+                                    <li><a class="dropdown-item" asp-controller="Category" asp-action="Index">Categories</a></li>
+                                    @* <li><a class="dropdown-item" asp-controller="Table" asp-action="Index">Tables</a></li> *@
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-controller="Users" asp-action="Index">Staff Accounts</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Report" asp-action="Index">Reports</a></li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    @* --- Notification Toast --- *@
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+        @if (TempData["Notification"] != null)
+        {
+            <div id="liveToast" class="toast show align-items-center text-white bg-success border-0" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-bell-fill me-2"></i> @TempData["Notification"]
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        }
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // Simple and robust way to hide the toast
+        window.onload = function() {
+            var toastEl = document.getElementById('liveToast');
+            if (toastEl) {
+                setTimeout(function () {
+                    var bsToast = new bootstrap.Toast(toastEl);
+                    bsToast.hide();
+                }, 4000); // 4 seconds
+            }
+        };
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

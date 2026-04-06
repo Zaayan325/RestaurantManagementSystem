@@ -1,0 +1,42 @@
+﻿@model RestaurantManagementSystem.Models.Table
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-warning shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Modify Table Details</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-3">
+                            <label asp-for="TableName" class="form-label font-weight-bold">Table Name</label>
+                            <input asp-for="TableName" class="form-control" />
+                            <span asp-validation-for="TableName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Capacity" class="form-label font-weight-bold">Capacity</label>
+                            <input asp-for="Capacity" type="number" class="form-control" />
+                            <span asp-validation-for="Capacity" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Status" class="form-label font-weight-bold">Current Status</label>
+                            <select asp-for="Status" class="form-select"
+                                    asp-items="Html.GetEnumSelectList<RestaurantManagementSystem.Models.TableStatus>()">
+                            </select>
+                        </div>
+
+                        <div class="mt-4 d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-warning px-4">Update Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

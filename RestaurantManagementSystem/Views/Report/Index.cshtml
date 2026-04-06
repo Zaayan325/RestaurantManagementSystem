@@ -1,0 +1,95 @@
+﻿@model RestaurantManagementSystem.Models.ViewModels.ReportsViewModel
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-dark"><i class="bi bi-speedometer2"></i> Business Analytics</h2>
+        <span class="text-muted">Today: @DateTime.Today.ToString("dd MMM yyyy")</span>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-primary text-white">
+                <div class="card-body">
+                    <h6>Total Orders Today</h6>
+                    <h2 class="display-6 fw-bold">@Model.TotalOrdersToday</h2>
+                    <i class="bi bi-cart-check position-absolute top-0 end-0 m-3 opacity-25 fs-1"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-success text-white">
+                <div class="card-body">
+                    <h6>Total Revenue Today</h6>
+                    <h2 class="display-6 fw-bold">@Model.TotalSalesToday.ToString("N0") <small class="fs-6">PKR</small></h2>
+                    <i class="bi bi-cash-stack position-absolute top-0 end-0 m-3 opacity-25 fs-1"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-dark text-white">
+                <div class="card-body">
+                    <h6>Avg. Order Value</h6>
+                    @{
+                        var avg = Model.TotalOrdersToday > 0 ? Model.TotalSalesToday / Model.TotalOrdersToday : 0;
+                    }
+                    <h2 class="display-6 fw-bold">@avg.ToString("N0") <small class="fs-6">PKR</small></h2>
+                    <i class="bi bi-graph-up-arrow position-absolute top-0 end-0 m-3 opacity-25 fs-1"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white fw-bold">
+                    <i class="bi bi-star-fill text-warning"></i> Top Selling Items (by Revenue)
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Item Name</th>
+                                <th class="text-center">Sold</th>
+                                <th class="text-end">Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.TopSellingItems)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@item.ItemName</td>
+                                    <td class="text-center">@item.Count</td>
+                                    <td class="text-end text-success fw-bold">@item.Revenue.ToString("N0") PKR</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white fw-bold">
+                    <i class="bi bi-pie-chart-fill text-primary"></i> Order Sources
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        @foreach (var source in Model.OrdersByServiceType)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                @source.Key
+                                <span class="badge bg-primary rounded-pill">@source.Value Orders</span>
+                            </li>
+                        }
+                        @if (!Model.OrdersByServiceType.Any())
+                        {
+                            <li class="list-group-item text-muted text-center py-4">No data for today</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

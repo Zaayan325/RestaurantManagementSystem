@@ -1,0 +1,118 @@
+﻿@using RestaurantManagementSystem.Models.ViewModels
+@model IEnumerable<RestaurantManagementSystem.Models.Order>
+
+<div class="container mt-4">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-list-stars"></i> Active Orders</h2>
+        @if (User.IsInRole("Waiter") || User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> New Order
+            </a>
+        }
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Table/Location</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>#@item.Id</td>
+                            <td>@item.OrderDate.ToString("hh:mm tt")</td>
+                            <td>
+                                <span class="badge rounded-pill bg-info text-dark">@item.ServiceType</span>
+                            </td>
+                            <td>@(item.Table?.TableName ?? "N/A")</td>
+                            <td class="fw-bold">@item.TotalAmount.ToString("N2") PKR</td>
+                            <td>
+                                <span class="badge @GetStatusClass(item.Status)">@item.Status</span>
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group shadow-sm">
+                                    @if (item.Status != OrderStatus.Completed && item.Status != OrderStatus.Cancelled)
+                                    {
+                                        <form asp-action="UpdateStatus" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@item.Id" />
+
+                                            @* --- WAITER & ADMIN BUTTONS --- *@
+                                            @if (User.IsInRole("Waiter") || User.IsInRole("Admin"))
+                                            {
+                                                @if (item.Status == OrderStatus.Pending)
+                                                {
+                                                    <button name="status" value="@((int)OrderStatus.Confirmed)" class="btn btn-sm btn-success">Confirm</button>
+                                                }
+                                                else if (item.Status == OrderStatus.Ready)
+                                                {
+                                                    <button name="status" value="@((int)OrderStatus.Completed)" class="btn btn-sm btn-info text-white">Complete & Pay</button>
+                                                }
+                                            }
+
+                                            @* --- CHEF & ADMIN BUTTONS --- *@
+                                            @if (User.IsInRole("Chef") || User.IsInRole("Admin"))
+                                            {
+                                                @if (item.Status == OrderStatus.Confirmed)
+                                                {
+                                                    <button name="status" value="@((int)OrderStatus.Preparing)" class="btn btn-sm btn-warning">Cook</button>
+                                                }
+                                                else if (item.Status == OrderStatus.Preparing)
+                                                {
+                                                    <button name="status" value="@((int)OrderStatus.Ready)" class="btn btn-sm btn-primary">Ready</button>
+                                                }
+                                            }
+                                        </form>
+                                    }
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-light border" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @* --- COMMON PAGINATION --- *@
+    @if (ViewBag.TotalPages > 1)
+    {
+        <div class="mt-4">
+            <partial name="_Pagination" model='new PaginationViewModel { 
+                CurrentPage = ViewBag.CurrentPage, 
+                TotalPages = ViewBag.TotalPages, 
+                Controller = "Order" 
+            }' />
+        </div>
+    }
+</div>
+@functions {
+    string GetStatusClass(OrderStatus status) => status switch
+    {
+        OrderStatus.Pending => "bg-warning text-dark",
+        OrderStatus.Confirmed => "bg-secondary",
+        OrderStatus.Preparing => "bg-primary",
+        OrderStatus.Ready => "bg-info text-dark",
+        OrderStatus.Completed => "bg-success",
+        _ => "bg-secondary"
+    };
+}

@@ -1,0 +1,31 @@
+﻿@model IEnumerable<RestaurantManagementSystem.Models.Category>
+
+<div class="d-flex justify-content-between mb-3">
+    <h1>Menu Categories</h1>
+    <a asp-action="Create" class="btn btn-primary">Add New Category</a>
+</div>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Category Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id"
+                       class="btn btn-sm btn-danger"
+                       onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

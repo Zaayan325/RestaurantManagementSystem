@@ -1,0 +1,90 @@
+﻿@model IEnumerable<RestaurantManagementSystem.Models.ViewModels.UserListViewModel>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark"><i class="bi bi-people-fill me-2"></i>Staff Management</h2>
+            <p class="text-muted">Manage system access, assign roles, and verify accounts.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary shadow-sm">
+            <i class="bi bi-person-plus-fill me-1"></i> Add New Staff
+        </a>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div asp-validation-summary="All" class="small"></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Staff Email</th>
+                        <th>Status</th> @* Verification Column *@
+                        <th>Current Role</th>
+                        <th>Quick Role Update</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-medium">@user.Email</td>
+                            <td>
+                                @* Logic: Show Verified Badge OR Verify Button *@
+                                @if (user.IsEmailConfirmed)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+                                        <i class="bi bi-patch-check-fill me-1"></i> Verified
+                                    </span>
+                                }
+                                else
+                                {
+                                    <form asp-action="VerifyEmail" method="post" style="display:inline;">
+                                        <input type="hidden" name="userId" value="@user.Id" />
+                                        <button type="submit" class="btn btn-sm btn-warning text-dark fw-bold shadow-sm px-3">
+                                            <i class="bi bi-shield-lock-fill me-1"></i> Verify Now
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge @(user.Role == "Admin" ? "bg-danger" : "bg-info") px-2 py-1">
+                                    @user.Role
+                                </span>
+                            </td>
+                            <td>
+                                <form asp-action="UpdateRole" method="post" class="d-flex gap-2 align-items-center">
+                                    <input type="hidden" name="userId" value="@user.Id" />
+                                    <select name="newRole" class="form-select form-select-sm" style="width: 140px;">
+                                        @foreach (var role in ViewBag.Roles)
+                                        {
+                                            <option value="@role" selected="@(user.Role == role)">@role</option>
+                                        }
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                        Update
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="text-end pe-4">
+                                <form asp-action="Delete" asp-route-id="@user.Id" method="post"
+                                      onsubmit="return confirm('Remove this staff member?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
