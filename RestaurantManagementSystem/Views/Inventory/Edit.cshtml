@@ -1,0 +1,51 @@
+@model RestaurantManagementSystem.Models.RawMaterial
+
+<h1>Edit Raw Material</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Unit" class="form-label"></label>
+                <input asp-for="Unit" class="form-control" />
+                <span asp-validation-for="Unit" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CurrentStock" class="form-label"></label>
+                <input asp-for="CurrentStock" class="form-control" />
+                <span asp-validation-for="CurrentStock" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ReorderLevel" class="form-label"></label>
+                <input asp-for="ReorderLevel" class="form-control" />
+                <span asp-validation-for="ReorderLevel" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="LastPurchasePrice" class="form-label"></label>
+                <input asp-for="LastPurchasePrice" class="form-control" />
+                <span asp-validation-for="LastPurchasePrice" class="text-danger"></span>
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="IsActive" class="form-check-input" />
+                <label asp-for="IsActive" class="form-check-label"></label>
+            </div>
+
+            <button type="submit" class="btn btn-success">Update</button>
+            <a asp-action="Index" class="btn btn-secondary">Back</a>
+        </form>
+    </div>
+</div>

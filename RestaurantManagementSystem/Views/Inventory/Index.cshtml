@@ -1,0 +1,53 @@
+@model IEnumerable<RestaurantManagementSystem.Models.RawMaterial>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1>Raw Material Inventory</h1>
+        <p class="text-muted mb-0">Low stock items: <strong>@ViewBag.LowStockCount</strong></p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">Add Raw Material</a>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Name</th>
+            <th>Current Stock</th>
+            <th>Reorder Level</th>
+            <th>Last Purchase Price</th>
+            <th>Status</th>
+            <th style="width: 280px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var isLowStock = item.CurrentStock <= item.ReorderLevel;
+            <tr class="@(isLowStock ? "table-warning" : string.Empty)">
+                <td>@item.Name (@item.Unit)</td>
+                <td>@item.CurrentStock</td>
+                <td>@item.ReorderLevel</td>
+                <td>@item.LastPurchasePrice</td>
+                <td>
+                    @if (isLowStock)
+                    {
+                        <span class="badge bg-danger">Reorder</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Healthy</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="AddStock" asp-route-id="@item.Id" class="btn btn-sm btn-success">Add Stock</a>
+                    <a asp-action="ConsumeStock" asp-route-id="@item.Id" class="btn btn-sm btn-secondary">Consume</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this raw material?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

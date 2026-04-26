@@ -64,7 +64,21 @@ namespace RestaurantManagementSystem.Data
                 await context.SaveChangesAsync();
             }
 
-            //5. Seed Orders
+            //5. Seed Raw Materials
+            if (!await context.RawMaterials.AnyAsync())
+            {
+                var materials = new List<RawMaterial>
+                {
+                    new RawMaterial { Name = "Chicken Breast", Unit = "kg", CurrentStock = 12, ReorderLevel = 5, LastPurchasePrice = 1100, LastPurchasedOn = DateTime.UtcNow.AddDays(-2), IsActive = true },
+                    new RawMaterial { Name = "Burger Buns", Unit = "pcs", CurrentStock = 80, ReorderLevel = 40, LastPurchasePrice = 35, LastPurchasedOn = DateTime.UtcNow.AddDays(-1), IsActive = true },
+                    new RawMaterial { Name = "Cooking Oil", Unit = "liters", CurrentStock = 6, ReorderLevel = 8, LastPurchasePrice = 700, LastPurchasedOn = DateTime.UtcNow.AddDays(-4), IsActive = true }
+                };
+
+                await context.RawMaterials.AddRangeAsync(materials);
+                await context.SaveChangesAsync();
+            }
+
+            //6. Seed Orders
             if (!await context.Orders.AnyAsync())
             {
                 var tableId = (await context.Tables.FirstAsync()).Id;
